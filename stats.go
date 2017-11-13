@@ -4,18 +4,53 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"github.com/montanaflynn/stats"
 	"io"
 	"os"
 	"strconv"
+	"strings"
+	"github.com/montanaflynn/stats"
 )
 
-func main() {
-	var field int
-	flag.IntVar(&field, "f", 1, "Field to calculate on (shorthand)")
+var field int
+var delimiter string
 
-	var delimiter string
+func init() {
+	flag.IntVar(&field, "f", 1, "Field to calculate on (shorthand)")
 	flag.StringVar(&delimiter, "d", ",", "Field delimiter (shorthand)")
+}
+
+func printStats(numbers []float64) {
+  var count = len(numbers)
+  fmt.Printf("Count: %v\n", count)
+
+	min, err := stats.Min(numbers)
+	if err == nil {
+		fmt.Printf("Min: %v\n", min)
+	} else {
+		fmt.Println(err)
+	}
+
+	max, err := stats.Max(numbers)
+	if err == nil {
+		fmt.Printf("Max: %v\n", max)
+	} else {
+		fmt.Println(err)
+	}
+
+	mean, err := stats.Mean(numbers)
+	if err == nil {
+		fmt.Printf("Average: %v\n", mean)
+	} else {
+		fmt.Println(err)
+	}
+}
+
+func parseLine(line string) (float64,error) {
+  tokens := strings.Split(line, delimiter)
+  return strconv.ParseFloat(tokens[field-1], 64)
+}
+
+func main() {
 
 	flag.Parse()
 
@@ -23,10 +58,8 @@ func main() {
 
 	var input io.Reader
 	if arg == "" {
-		fmt.Println("Reading from stdin...")
 		input = os.Stdin
 	} else {
-		fmt.Printf("First arg: %s\n", arg)
 		f, err := os.Open(arg)
 		if err == nil {
 			input = f
@@ -37,16 +70,11 @@ func main() {
 
 	scanner := bufio.NewScanner(input)
 	for scanner.Scan() {
-		if s, err := strconv.ParseFloat(scanner.Text(), 64); err == nil {
-			numbers = append(numbers, s)
-		}
+    if number, err := parseLine(scanner.Text()); err == nil {
+			numbers = append(numbers, number)
+    }
 	}
 
-	fmt.Println(numbers)
-	mean, err := stats.Mean(numbers)
-	if err == nil {
-		fmt.Printf("Average: %v\n", mean)
-	} else {
-		fmt.Println(err)
-	}
+  printStats(numbers)
+
 }
