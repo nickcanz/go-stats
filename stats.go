@@ -4,11 +4,11 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"github.com/montanaflynn/stats"
 	"io"
 	"os"
 	"strconv"
 	"strings"
-	"github.com/montanaflynn/stats"
 )
 
 var field int
@@ -20,8 +20,8 @@ func init() {
 }
 
 func printStats(numbers []float64) {
-  var count = len(numbers)
-  fmt.Printf("Count: %v\n", count)
+	var count = len(numbers)
+	fmt.Printf("Count: %v\n", count)
 
 	min, err := stats.Min(numbers)
 	if err == nil {
@@ -45,9 +45,9 @@ func printStats(numbers []float64) {
 	}
 }
 
-func parseLine(line string) (float64,error) {
-  tokens := strings.Split(line, delimiter)
-  return strconv.ParseFloat(tokens[field-1], 64)
+func parseLine(line string) (float64, error) {
+	tokens := strings.Split(line, delimiter)
+	return strconv.ParseFloat(tokens[field-1], 64)
 }
 
 func main() {
@@ -70,11 +70,10 @@ func main() {
 
 	scanner := bufio.NewScanner(input)
 	for scanner.Scan() {
-    if number, err := parseLine(scanner.Text()); err == nil {
+		if number, err := parseLine(scanner.Text()); err == nil {
 			numbers = append(numbers, number)
-    }
+		}
 	}
 
-  printStats(numbers)
-
+	printStats(numbers)
 }
