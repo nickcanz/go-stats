@@ -4,11 +4,12 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"github.com/montanaflynn/stats"
 	"io"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/montanaflynn/stats"
 )
 
 var field int
@@ -21,25 +22,47 @@ func init() {
 
 func printStats(numbers []float64) {
 	var count = len(numbers)
-	fmt.Printf("Count: %v\n", count)
+	fmt.Printf("count: %d\n", count)
 
 	min, err := stats.Min(numbers)
 	if err == nil {
-		fmt.Printf("Min: %v\n", min)
-	} else {
-		fmt.Println(err)
-	}
-
-	max, err := stats.Max(numbers)
-	if err == nil {
-		fmt.Printf("Max: %v\n", max)
+		fmt.Printf("min: %.2f\n", min)
 	} else {
 		fmt.Println(err)
 	}
 
 	mean, err := stats.Mean(numbers)
 	if err == nil {
-		fmt.Printf("Average: %v\n", mean)
+		fmt.Printf("avg: %.2f\n", mean)
+	} else {
+		fmt.Println(err)
+	}
+
+	max, err := stats.Max(numbers)
+	if err == nil {
+		fmt.Printf("max: %.2f\n", max)
+	} else {
+		fmt.Println(err)
+	}
+
+	// note: stats.Median has a bug, using Percentile instead
+	p50, err := stats.Percentile(numbers, 50.0)
+	if err == nil {
+		fmt.Printf("p50: %.2f\n", p50)
+	} else {
+		fmt.Println(err)
+	}
+
+	p95, err := stats.Percentile(numbers, 95.0)
+	if err == nil {
+		fmt.Printf("p95: %.2f\n", p95)
+	} else {
+		fmt.Println(err)
+	}
+
+	p99, err := stats.Percentile(numbers, 99.0)
+	if err == nil {
+		fmt.Printf("p99: %.2f\n", p99)
 	} else {
 		fmt.Println(err)
 	}
